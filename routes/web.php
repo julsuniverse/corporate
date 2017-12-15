@@ -17,3 +17,9 @@ Route::resource('/', 'IndexController', [
         'index' => 'home'
     ]
 ]);
+
+Route::resource('portfolios', 'PortfolioController', [
+    'parameters' => [
+        'portfolios' => 'alias',
+    ]
+]);

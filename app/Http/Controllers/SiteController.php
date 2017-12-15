@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Menu;
 use App\Repositories\MenusRepository;
 use Illuminate\Http\Request;
+use Lavary\Menu\Builder;
+
 
 class SiteController extends Controller
 {
@@ -15,6 +17,10 @@ class SiteController extends Controller
 
     protected $template; //имя шаблона
 
+    /**
+     * Передаваемые значения во view
+     * @var array
+     */
     protected $vars = array(); //передаваемые переменные
 
     protected $bar = false; //sidebar
@@ -22,20 +28,32 @@ class SiteController extends Controller
     protected $contentRigtBar = false;
     protected $contentLeftBar = false;
 
+    /**
+     * SiteController constructor.
+     * @param MenusRepository $m_rep
+     */
     public function __construct(MenusRepository $m_rep)
     {
         $this->m_rep = $m_rep;
     }
 
+    /**
+     * @return $this
+     * @throws \Throwable
+     */
     protected function renderOutput()
     {
         $menu = $this->getMenu();
         $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
         $this->vars = array_add($this->vars, 'navigation', $navigation);
+
         return view($this->template)->with($this->vars);
     }
 
-    protected function getMenu()
+    /**
+     * @return \Lavary\Menu\Builder
+     */
+    protected function getMenu() : Builder
     {
         $menu = $this->m_rep->get();
 
@@ -52,8 +70,6 @@ class SiteController extends Controller
 
             }
         });
-
-        //dd($mBuilder);
 
         return $mBuilder;
     }
