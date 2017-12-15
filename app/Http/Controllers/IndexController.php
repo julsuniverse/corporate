@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Menu;
+use App\Repositories\ArticlesRepository;
 use App\Repositories\MenusRepository;
 use App\Repositories\PortfoliosRepository;
 use App\Repositories\SlidersRepository;
@@ -14,10 +15,12 @@ class IndexController extends SiteController
      * IndexController constructor.
      * @param SlidersRepository $s_rep
      * @param PortfoliosRepository $p_rep
+     * @param ArticlesRepository $a_rep
      */
     public function __construct(
         SlidersRepository $s_rep,
-        PortfoliosRepository $p_rep
+        PortfoliosRepository $p_rep,
+        ArticlesRepository $a_rep
     ) {
         parent::__construct(
             new MenusRepository(new Menu())
@@ -27,13 +30,14 @@ class IndexController extends SiteController
         $this->template = env('THEME') . '.index';
         $this->s_rep = $s_rep;
         $this->p_rep = $p_rep;
+        $this->a_rep = $a_rep;
     }
 
     /**
-     * @return $this
+     * @return \Illuminate\view\view
      * @throws \Throwable
      */
-    public function index()
+    public function index(): \Illuminate\view\view
     {
         $sliderItems = $this->getSliders();
         $sliders = view(env('THEME') . '.slider')
@@ -42,9 +46,15 @@ class IndexController extends SiteController
         $this->vars = array_add($this->vars, 'sliders', $sliders);
 
         $portfolios = $this->getPortfolio();
-        $content = view(env('THEME').'.content')
-            ->with('portfolios', $portfolios)->render();
+        $content = view(env('THEME') . '.content')
+            ->with('portfolios', $portfolios)
+            ->render();
         $this->vars = array_add($this->vars, 'content', $content);
+
+        $articles = $this->getArticles();
+        $this->contentRigtBar = view(env('THEME') . '.indexBar')
+            ->with('articles', $articles)
+            ->render();
 
         return $this->renderOutput();
     }
@@ -68,12 +78,25 @@ class IndexController extends SiteController
         return $sliders;
     }
 
+    /**
+     * @return bool|\Illuminate\Database\Eloquent\Collection
+     */
     protected function getPortfolio()
     {
-        $portfolio = $this->p_rep->get('*', \Config::get('settings.home_pore_count'));
+        $portfolio = $this->p_rep->get('*', \Config::get('settings.home_port_count'));
 
         return $portfolio;
+    }
 
+    /**
+     * @return bool|\Illuminate\Database\Eloquent\Collection
+     */
+    protected function getArticles()
+    {
+        $articles = $this->a_rep->get(['title', 'created_at', 'img', 'alias'],
+            \Config::get('settings.home_articles_count'));
+
+        return $articles;
     }
 
 }

@@ -13,18 +13,21 @@ abstract class Repository
     /**
      * @param string $select
      * @param bool $take
-     * @return Collection
+     * @return bool|Collection
      */
-    public function get($select = '*', $take = false) : Collection
+    public function get($select = '*', $take = false)
     {
         $builder = $this->model->select($select);
 
-        if($take) {
+        if($take)
             $builder->take($take);
-        }
         return $this->check($builder->get());
     }
 
+    /**
+     * @param $result
+     * @return bool|string
+     */
     protected function check($result)
     {
         if($result->isEmpty())

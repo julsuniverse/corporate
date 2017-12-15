@@ -38,14 +38,20 @@ class SiteController extends Controller
     }
 
     /**
-     * @return $this
+     * @return \Illuminate\view\view
      * @throws \Throwable
      */
-    protected function renderOutput()
+    protected function renderOutput(): \Illuminate\view\view
     {
         $menu = $this->getMenu();
         $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
         $this->vars = array_add($this->vars, 'navigation', $navigation);
+        if ($this->contentRigtBar) {
+            $rightBar = view(env('THEME') . '.rightBar')
+                ->with('contentRightBar', $this->contentRigtBar)
+                ->render();
+            $this->vars = array_add($this->vars, 'rightBar', $rightBar);
+        }
 
         return view($this->template)->with($this->vars);
     }
@@ -53,7 +59,7 @@ class SiteController extends Controller
     /**
      * @return \Lavary\Menu\Builder
      */
-    protected function getMenu() : Builder
+    protected function getMenu(): Builder
     {
         $menu = $this->m_rep->get();
 
