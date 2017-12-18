@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Menu;
-use App\Repositories\MenusRepository;
+use App\Services\MenuService;
 use Illuminate\Http\Request;
-use Lavary\Menu\Builder;
 
 
 class SiteController extends Controller
 {
-    protected $p_rep; //portfolio repository
-    protected $s_rep; //slider repository
-    protected $a_rep; //articles repository
-    protected $m_rep; // menu repository
+    protected $portfolioService;
+    protected $sliderService;
+    protected $articleService;
+    protected $menuService;
 
     protected $template; //имя шаблона
 
@@ -23,18 +21,18 @@ class SiteController extends Controller
      */
     protected $vars = array(); //передаваемые переменные
 
-    protected $bar = false; //sidebar
+    protected $bar = 'no'; //sidebar
 
     protected $contentRigtBar = false;
     protected $contentLeftBar = false;
 
     /**
      * SiteController constructor.
-     * @param MenusRepository $m_rep
+     * @param MenuService $menuService
      */
-    public function __construct(MenusRepository $m_rep)
+    public function __construct(MenuService $menuService)
     {
-        $this->m_rep = $m_rep;
+        $this->menuService = $menuService;
     }
 
     /**
@@ -43,7 +41,7 @@ class SiteController extends Controller
      */
     protected function renderOutput(): \Illuminate\view\view
     {
-        $menu = $this->getMenu();
+        $menu = $this->menuService->getMenu();
         $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
         $this->vars = array_add($this->vars, 'navigation', $navigation);
         if ($this->contentRigtBar) {
@@ -53,31 +51,13 @@ class SiteController extends Controller
             $this->vars = array_add($this->vars, 'rightBar', $rightBar);
         }
 
+        $this->vars = array_add($this->vars, 'bar', $this->bar);
+
+        $footer = view('pink.footer')->render();
+        $this->vars = array_add($this->vars, 'footer', $footer);
+
         return view($this->template)->with($this->vars);
     }
 
-    /**
-     * @return \Lavary\Menu\Builder
-     */
-    protected function getMenu(): Builder
-    {
-        $menu = $this->m_rep->get();
-
-        $mBuilder = \LMenu::make('MyNav', function ($m) use ($menu) {
-            foreach ($menu as $item) {
-
-                if ($item->parent_id == 0) {
-                    $m->add($item->title, $item->path)->id($item->id);
-                } else {
-                    if ($m->find($item->parent_id)) {
-                        $m->find($item->parent_id)->add($item->title, $item->path)->id($item->id);
-                    }
-                }
-
-            }
-        });
-
-        return $mBuilder;
-    }
 
 }

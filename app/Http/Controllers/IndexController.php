@@ -2,35 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Menu;
-use App\Repositories\ArticlesRepository;
-use App\Repositories\MenusRepository;
-use App\Repositories\PortfoliosRepository;
-use App\Repositories\SlidersRepository;
+use App\Services\ArticleService;
+use App\Services\MenuService;
+use App\Services\PortfolioService;
+use App\Services\SliderService;
 use Illuminate\Http\Request;
 
 class IndexController extends SiteController
 {
     /**
      * IndexController constructor.
-     * @param SlidersRepository $s_rep
-     * @param PortfoliosRepository $p_rep
-     * @param ArticlesRepository $a_rep
+     * @param SliderService $sliderService
+     * @param PortfolioService $portfolioService
+     * @param ArticleService $articleService
+     * @param MenuService $menuService
      */
     public function __construct(
-        SlidersRepository $s_rep,
-        PortfoliosRepository $p_rep,
-        ArticlesRepository $a_rep
+        SliderService $sliderService,
+        PortfolioService $portfolioService,
+        ArticleService $articleService,
+        MenuService $menuService
     ) {
         parent::__construct(
-            new MenusRepository(new Menu())
+            $menuService
         );
 
         $this->bar = 'right';
         $this->template = env('THEME') . '.index';
-        $this->s_rep = $s_rep;
-        $this->p_rep = $p_rep;
-        $this->a_rep = $a_rep;
+
+        $this->sliderService = $sliderService;
+        $this->portfolioService = $portfolioService;
+        $this->articleService = $articleService;
     }
 
     /**
@@ -39,19 +41,19 @@ class IndexController extends SiteController
      */
     public function index(): \Illuminate\view\view
     {
-        $sliderItems = $this->getSliders();
+        $sliderItems = $this->sliderService->getSliders();
         $sliders = view(env('THEME') . '.slider')
             ->with('sliders', $sliderItems)
             ->render();
         $this->vars = array_add($this->vars, 'sliders', $sliders);
 
-        $portfolios = $this->getPortfolio();
+        $portfolios = $this->portfolioService->getPortfolio();
         $content = view(env('THEME') . '.content')
             ->with('portfolios', $portfolios)
             ->render();
         $this->vars = array_add($this->vars, 'content', $content);
 
-        $articles = $this->getArticles();
+        $articles = $this->articleService->getPreview();
         $this->contentRigtBar = view(env('THEME') . '.indexBar')
             ->with('articles', $articles)
             ->render();
@@ -59,44 +61,5 @@ class IndexController extends SiteController
         return $this->renderOutput();
     }
 
-
-    /**
-     * @return bool|\Illuminate\Database\Eloquent\Collection
-     */
-    public function getSliders()
-    {
-        $sliders = $this->s_rep->get();
-
-        if ($sliders->isEmpty()) {
-            return false;
-        }
-        $sliders->transform(function ($item, $key) {
-            $item->img = \Config::get('settings.slider_path') . '/' . $item->img;
-            return $item;
-        });
-
-        return $sliders;
-    }
-
-    /**
-     * @return bool|\Illuminate\Database\Eloquent\Collection
-     */
-    protected function getPortfolio()
-    {
-        $portfolio = $this->p_rep->get('*', \Config::get('settings.home_port_count'));
-
-        return $portfolio;
-    }
-
-    /**
-     * @return bool|\Illuminate\Database\Eloquent\Collection
-     */
-    protected function getArticles()
-    {
-        $articles = $this->a_rep->get(['title', 'created_at', 'img', 'alias'],
-            \Config::get('settings.home_articles_count'));
-
-        return $articles;
-    }
 
 }

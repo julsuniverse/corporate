@@ -11,16 +11,25 @@ abstract class Repository
 
 
     /**
-     * @param string $select
-     * @param bool $take
+     * @param mixed $select
+     * @param int|null $take
+     * @param int|null $pagination
+     * How to orderBy query. default: id DESC
+     * @param bool $desc
      * @return bool|Collection
      */
-    public function get($select = '*', $take = false)
+    public function get($select = '*', ?int $take = null, ?int $pagination = null, bool $desc = true)
     {
         $builder = $this->model->select($select);
 
         if($take)
             $builder->take($take);
+        if($desc)
+            $builder->orderBy('id', 'DESC');
+
+        if($pagination)
+            return $this->check($builder->paginate($pagination));
+
         return $this->check($builder->get());
     }
 
