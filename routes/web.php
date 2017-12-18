@@ -24,8 +24,12 @@ Route::resource('portfolios', 'PortfolioController', [
     ]
 ]);
 
-Route::resource('articles', 'ArticlesController', [
+Route::resource('articles', 'ArticleController', [
     'parameters' => [
         'articles' => 'alias',
     ]
+]);
+
+Route::get('articles/cat/{cat_alias?}', [
+    'uses' => 'ArticleController@index',  'as' => 'articlesCat'
 ]);

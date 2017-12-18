@@ -23,9 +23,7 @@ class IndexController extends SiteController
         ArticleService $articleService,
         MenuService $menuService
     ) {
-        parent::__construct(
-            $menuService
-        );
+        parent::__construct($menuService);
 
         $this->bar = 'right';
         $this->template = env('THEME') . '.index';
@@ -47,14 +45,14 @@ class IndexController extends SiteController
             ->render();
         $this->vars = array_add($this->vars, 'sliders', $sliders);
 
-        $portfolios = $this->portfolioService->getPortfolio();
+        $portfolios = $this->portfolioService->getPreview(\Config::get('settings.home_port_count'));
         $content = view(env('THEME') . '.content')
             ->with('portfolios', $portfolios)
             ->render();
         $this->vars = array_add($this->vars, 'content', $content);
 
         $articles = $this->articleService->getPreview();
-        $this->contentRigtBar = view(env('THEME') . '.indexBar')
+        $this->contentRightBar = view(env('THEME') . '.indexBar')
             ->with('articles', $articles)
             ->render();
 

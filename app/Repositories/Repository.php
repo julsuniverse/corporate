@@ -16,7 +16,7 @@ abstract class Repository
      * @param int|null $pagination
      * How to orderBy query. default: id DESC
      * @param bool $desc
-     * @return bool|Collection
+     * @return bool|Collection| \Illuminate\Pagination\LengthAwarePaginator
      */
     public function get($select = '*', ?int $take = null, ?int $pagination = null, bool $desc = true)
     {

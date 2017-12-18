@@ -20,7 +20,7 @@ class MenuService
      */
     public function getMenu(): Builder
     {
-        $menu = $this->m_rep->get();
+        $menu = $this->m_rep->get('*', null, null, false);
 
         $mBuilder = \LMenu::make('MyNav', function ($m) use ($menu) {
             foreach ($menu as $item) {

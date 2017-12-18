@@ -12,6 +12,7 @@ class SiteController extends Controller
     protected $sliderService;
     protected $articleService;
     protected $menuService;
+    protected $commentService;
 
     protected $template; //имя шаблона
 
@@ -23,7 +24,7 @@ class SiteController extends Controller
 
     protected $bar = 'no'; //sidebar
 
-    protected $contentRigtBar = false;
+    protected $contentRightBar = false;
     protected $contentLeftBar = false;
 
     /**
@@ -44,9 +45,9 @@ class SiteController extends Controller
         $menu = $this->menuService->getMenu();
         $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
         $this->vars = array_add($this->vars, 'navigation', $navigation);
-        if ($this->contentRigtBar) {
+        if ($this->contentRightBar) {
             $rightBar = view(env('THEME') . '.rightBar')
-                ->with('contentRightBar', $this->contentRigtBar)
+                ->with('contentRightBar', $this->contentRightBar)
                 ->render();
             $this->vars = array_add($this->vars, 'rightBar', $rightBar);
         }

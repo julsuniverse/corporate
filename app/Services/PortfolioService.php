@@ -6,20 +6,22 @@ use App\Repositories\PortfoliosRepository;
 
 class PortfolioService
 {
-    private $p_rep;
+    private $repository;
 
     public function __construct(PortfoliosRepository $p_rep)
     {
-        $this->p_rep = $p_rep;
+        $this->repository = $p_rep;
     }
 
     /**
+     * @param $take
      * @return bool|\Illuminate\Database\Eloquent\Collection
      */
-    public function getPortfolio()
+    public function getPreview($take)
     {
-        $portfolio = $this->p_rep->get('*', \Config::get('settings.home_port_count'));
+        $portfolio = $this->repository->get('*', $take);
 
         return $portfolio;
     }
+
 }

@@ -19,11 +19,14 @@ class ArticleService
 
     /**
      * @param bool $alias
-     * @return bool|\Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function getArticles($alias = false): \Illuminate\Database\Eloquent\Collection
+    public function getArticles($alias = false): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $articles = $this->a_rep->get('*', null, 2);
+        $articles = $this->a_rep->get(['id', 'title', 'alias', 'created_at', 'img', 'desc', 'user_id', 'category_id'], null, 2);
+
+        if($articles)
+            $articles->load('user', 'category', 'comments');
 
         return $articles;
     }
