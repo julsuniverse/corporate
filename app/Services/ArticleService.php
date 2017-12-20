@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Category;
 use App\Repositories\ArticlesRepository;
 
 class ArticleService
 {
-    private $a_rep;
+    private $repository;
 
     /**
      * ArticleService constructor.
@@ -14,7 +15,7 @@ class ArticleService
      */
     public function __construct(ArticlesRepository $a_rep)
     {
-        $this->a_rep = $a_rep;
+        $this->repository = $a_rep;
     }
 
     /**
@@ -23,12 +24,30 @@ class ArticleService
      */
     public function getArticles($alias = false): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $articles = $this->a_rep->get(['id', 'title', 'alias', 'created_at', 'img', 'desc', 'user_id', 'category_id'], null, 2);
+        $where = null;
+        if ($alias) {
+            $id = Category::select('id')->where('alias', $alias)->first()->id;
+            $where = ['category_id', $id];
+        }
 
-        if($articles)
+        $articles = $this->repository->get(
+            ['id', 'title', 'alias', 'created_at', 'img', 'desc', 'user_id', 'category_id'],
+            null,
+            2,
+            $where
+        );
+
+        if ($articles) {
             $articles->load('user', 'category', 'comments');
+        }
 
         return $articles;
+    }
+
+    public function one($alias, $attr = array())
+    {
+        $article = $this->repository->one($alias, $attr);
+        return $article;
     }
 
     /**
@@ -36,7 +55,7 @@ class ArticleService
      */
     public function getPreview(): \Illuminate\Database\Eloquent\Collection
     {
-        $articles = $this->a_rep->get(['title', 'created_at', 'img', 'alias'],
+        $articles = $this->repository->get(['title', 'created_at', 'img', 'alias'],
             \Config::get('settings.home_articles_count'));
 
         return $articles;

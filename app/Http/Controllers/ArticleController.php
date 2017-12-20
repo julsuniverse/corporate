@@ -35,29 +35,59 @@ class ArticleController extends SiteController
 
 
     /**
+     * @param bool $cat_alias
      * @return \Illuminate\view\view
      * @throws \Throwable
      */
-    public function index()
+    public function index($cat_alias = false)
     {
-        $articles = $this->articleService->getArticles();
+        $articles = $this->articleService->getArticles($cat_alias);
 
         $content = view(env('THEME') . '.articles_content')
             ->with('articles', $articles)
             ->render();
         $this->vars = array_add($this->vars, 'content', $content);
 
+        $this->contentRightBar = $this->getRightBar();
+
+        return $this->renderOutput();
+    }
+
+    /**
+     * @param $alias
+     * @return \Illuminate\view\view
+     * @throws \Throwable
+     */
+    public function show($alias)
+    {
+        $article = $this->articleService->one($alias, ['comments' => true]);
+        if($article)
+            $article->img = json_decode($article->img);
+        $content = view(env('THEME').'.article_content')
+            ->with('article', $article)
+            ->render();
+        $this->vars = array_add($this->vars, 'content', $content);
+
+        $this->contentRightBar = $this->getRightBar();
+
+        return $this->renderOutput();
+    }
+
+
+    /**
+     * @return string
+     * @throws \Throwable
+     */
+    public function getRightBar()
+    {
         $comments = $this->commentService->getRecent(config('settings.recent_comments'));
         $portfolios = $this->portfolioService->getPreview(config('settings.recent_portfolios'));
-        $this->contentRightBar = view(env('THEME').'.articles_bar')
+        return view(env('THEME').'.articles_bar')
             ->with([
                 'comments' => $comments,
                 'portfolios' => $portfolios,
             ])
             ->render();
-
-        return $this->renderOutput();
     }
-
 
 }
