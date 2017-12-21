@@ -40,8 +40,27 @@ Route::resource('comment', 'CommentController', [
 
 //Route::auth();
 
-Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::get('login',  [ 'as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
 
 Route::post('login', 'Auth\LoginController@login');
 
 Route::get('logout', 'Auth\LoginController@logout');
+
+/**** ADMIN ****/
+/*
+Route::group([
+    'prefix' => 'admin',
+    'middleware' => 'auth',
+], function() {
+    //admin
+    Route::get('/', ['uses' => 'Admin\IndexController@index', 'as' => 'adminIndex']);
+    Route::resource('/articles', 'Admin\ArticleController');
+
+});*/
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/', ['uses' => 'Admin\IndexController@index', 'as' => 'adminIndex']);
+    Route::resource('/articles', 'Admin\ArticleController')->names([
+        'index' => 'admin-articles'
+    ]);
+});

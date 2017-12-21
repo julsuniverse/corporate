@@ -38,4 +38,23 @@ class MenuService
 
         return $mBuilder;
     }
+
+    /**
+     * @return \Lavary\Menu\Builder
+     */
+    public function getAdmin(): Builder
+    {
+        $mBuilder = \LMenu::make('adminMenu', function ($menu) {
+            $menu->add('Статьи', array('route' => 'admin-articles'));
+            $menu->add('Портфолио', array('route' => 'admin-articles'));
+            $menu->add('Меню', array('route' => 'admin-articles'));
+            $menu->add('Пользователи', array('route' => 'admin-articles'));
+            $menu->add('Привилегии', array('route' => 'admin-articles'));
+
+
+        });
+
+        return $mBuilder;
+    }
+
 }
