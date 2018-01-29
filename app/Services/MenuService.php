@@ -45,11 +45,11 @@ class MenuService
     public function getAdmin(): Builder
     {
         $mBuilder = \LMenu::make('adminMenu', function ($menu) {
-            $menu->add('Статьи', array('route' => 'admin-articles'));
-            $menu->add('Портфолио', array('route' => 'admin-articles'));
-            $menu->add('Меню', array('route' => 'admin-articles'));
-            $menu->add('Пользователи', array('route' => 'admin-articles'));
-            $menu->add('Привилегии', array('route' => 'admin-articles'));
+            $menu->add('Статьи', array('route' => 'admin.articles.index'));
+            $menu->add('Портфолио', array('route' => 'admin.articles.index'));
+            $menu->add('Меню', array('route' => 'admin.articles.index'));
+            $menu->add('Пользователи', array('route' => 'admin.articles.index'));
+            $menu->add('Привилегии', array('route' => 'admin.articles.index'));
 
 
         });

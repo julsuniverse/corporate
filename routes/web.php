@@ -47,8 +47,8 @@ Route::post('login', 'Auth\LoginController@login');
 Route::get('logout', 'Auth\LoginController@logout');
 
 /**** ADMIN ****/
-/*
-Route::group([
+
+/*Route::group([
     'prefix' => 'admin',
     'middleware' => 'auth',
 ], function() {
@@ -58,9 +58,9 @@ Route::group([
 
 });*/
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/', ['uses' => 'Admin\IndexController@index', 'as' => 'adminIndex']);
-    Route::resource('/articles', 'Admin\ArticleController')->names([
-        'index' => 'admin-articles'
+    Route::resource('articles', 'Admin\ArticleController')->names([
+
     ]);
 });
