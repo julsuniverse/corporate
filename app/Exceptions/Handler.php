@@ -2,6 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Menu;
+use App\Repositories\ArticlesRepository;
+use App\Repositories\MenusRepository;
+use App\Services\ArticleService;
+use App\Services\MenuService;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -48,6 +53,21 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($this->isHttpException($exception)) {
+            $code = $exception->getStatusCode();
+            if($code == 404) {
+                $menu = new MenuService(new MenusRepository(new Menu()));
+                $menu = $menu->getMenu();
+                $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
+                return response()->view(env('THEME').'.errors.404', [
+                    'bar' => 'no',
+                    'title' => '404 Not Found',
+                    'navigation' => $navigation,
+                ]);
+            }
+
+
+        }
         return parent::render($request, $exception);
     }
 }

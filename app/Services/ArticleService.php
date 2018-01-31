@@ -44,6 +44,9 @@ class ArticleService
         return $articles;
     }
 
+    /**
+     * @return bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Pagination\LengthAwarePaginator
+     */
     public function getAll()
     {
         $articles = $this->repository->get(
