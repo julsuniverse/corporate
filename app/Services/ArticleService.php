@@ -44,6 +44,22 @@ class ArticleService
         return $articles;
     }
 
+    public function getAll()
+    {
+        $articles = $this->repository->get(
+            ['id', 'title', 'alias', 'created_at', 'img','text', 'desc', 'user_id', 'category_id'],
+            null,
+            null,
+            null
+        );
+
+        if ($articles) {
+            $articles->load('category', 'comments');
+        }
+
+        return $articles;
+    }
+
     public function one($alias, $attr = array())
     {
         $article = $this->repository->one($alias, $attr);

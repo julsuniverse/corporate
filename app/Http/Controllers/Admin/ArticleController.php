@@ -3,18 +3,38 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ArticleService;
+use App\Services\MenuService;
 use Illuminate\Http\Request;
 
-class ArticleController extends Controller
+class ArticleController extends AdminController
 {
+    public function __construct(
+        MenuService $menuService,
+        ArticleService $articleService
+    )
+    {
+        parent::__construct($menuService);
+
+        $this->template = env('THEME').'.admin.articles';
+        $this->articleService = $articleService;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ArticleController
+     * @throws \Throwable
      */
     public function index()
     {
-        echo self::class . ' - index';
+        $this->title = "Статьи";
+        $articles = $this->articleService->getAll();
+
+        $this->content = view(env('THEME').'.admin.articles_content')
+            ->with('articles', $articles)
+            ->render();
+        return $this->renderOutput();
     }
 
     /**

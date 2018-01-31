@@ -38,8 +38,8 @@ Route::resource('comment', 'CommentController', [
     'only' => ['store']
 ]);
 
-//Route::auth();
-Auth::routes();
+Route::auth();
+//Auth::routes();
 
 Route::get('login',  [ 'as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
 
@@ -62,9 +62,8 @@ Route::get('logout', 'Auth\LoginController@logout');
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/', ['uses' => 'Admin\IndexController@index', 'as' => 'adminIndex'])
         ->middleware('can:VIEW_ADMIN');
-    Route::resource('articles', 'Admin\ArticleController')->names([
-
-    ]);
+    Route::resource('articles', 'Admin\ArticleController')
+        ->middleware('can:VIEW_ADMIN_ARTICLES');
 });
 
 
