@@ -3,9 +3,7 @@
 namespace App\Exceptions;
 
 use App\Menu;
-use App\Repositories\ArticlesRepository;
 use App\Repositories\MenusRepository;
-use App\Services\ArticleService;
 use App\Services\MenuService;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -59,6 +57,7 @@ class Handler extends ExceptionHandler
                 $menu = new MenuService(new MenusRepository(new Menu()));
                 $menu = $menu->getMenu();
                 $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
+                \Log::alert('Page not found: ' . $request->url().);
                 return response()->view(env('THEME').'.errors.404', [
                     'bar' => 'no',
                     'title' => '404 Not Found',
