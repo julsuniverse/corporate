@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
                 $menu = new MenuService(new MenusRepository(new Menu()));
                 $menu = $menu->getMenu();
                 $navigation = view(env('THEME') . '.navigation')->with('menu', $menu)->render();
-                \Log::alert('Page not found: ' . $request->url().);
+                \Log::alert('Page not found: ' . $request->url());
                 return response()->view(env('THEME').'.errors.404', [
                     'bar' => 'no',
                     'title' => '404 Not Found',

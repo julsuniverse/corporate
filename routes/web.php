@@ -60,10 +60,45 @@ Route::get('logout', 'Auth\LoginController@logout');
 });*/
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
-    Route::get('/', ['uses' => 'Admin\IndexController@index', 'as' => 'adminIndex'])
-        ->middleware('can:VIEW_ADMIN');
-    Route::resource('articles', 'Admin\ArticleController')
-        ->middleware('can:VIEW_ADMIN_ARTICLES');
+    Route::get('/', [
+        'uses' => 'Admin\IndexController@index',
+        'as' => 'adminIndex'
+    ])->middleware('can:VIEW_ADMIN');
+
+    Route::get('articles', [
+        'uses' => 'Admin\ArticleController@index',
+        'as' => 'articles.index'
+    ])->middleware('can:VIEW_ADMIN_ARTICLES');
+
+    Route::get('articles/create', [
+        'uses' => 'Admin\ArticleController@create',
+        'as' => 'articles.create'
+    ])->middleware('can:save,App\Article');
+
+    Route::get('articles/show/{alias}', [
+        'uses' => 'Admin\ArticleController@show',
+        'as' => 'articles.show'
+    ])->middleware('');
+
+    Route::get('articles/update/{alias}', [
+        'uses' => 'Admin\ArticleController@updateupdate',
+        'as' => 'articles.update'
+    ])->middleware('');
+
+    Route::get('articles/store', [
+        'uses' => 'Admin\ArticleController@store',
+        'as' => 'articles.store'
+    ])->middleware('');
+
+    Route::get('articles/{alias}/edit', [
+        'uses' => 'Admin\ArticleController@edit',
+        'as' => 'articles.edit'
+    ])->middleware('');
+
+    Route::get('articles/destroy{alias}', [
+        'uses' => 'Admin\ArticleController@destroy',
+        'as' => 'articles.destroy'
+    ])->middleware('');
 });
 
 
