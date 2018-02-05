@@ -58,6 +58,9 @@ Route::get('logout', 'Auth\LoginController@logout');
     Route::resource('/articles', 'Admin\ArticleController');
 
 });*/
+Route::get('ckfinder/ckfinder.html',function(){
+    return view('pink.ckfinder.ckfinder');
+});
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/', [
@@ -100,5 +103,6 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
         'as' => 'articles.destroy'
     ])->middleware('');
 });
+
 
 

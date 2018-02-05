@@ -29,9 +29,10 @@
 
     <!-- JAVASCRIPTs -->
     <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/jquery.js"></script>
-    <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/jquery-ui.js"></script>
+
     <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/ckeditor/ckeditor.js"></script>
-    <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/bootstrap-filestyle.min.js"></script>
+    <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/ckfinder/ckfinder.js"></script>
+
 
 
 </head>
