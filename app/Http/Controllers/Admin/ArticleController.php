@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Article;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ArticleRequest;
 use App\Repositories\CategoryRepository;
 use App\Services\ArticleService;
 use App\Services\MenuService;
@@ -46,7 +47,7 @@ class ArticleController extends AdminController
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ArticleController
      * @throws \Throwable
      */
     public function create()
@@ -76,9 +77,15 @@ class ArticleController extends AdminController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        //
+        $result = $this->articleService->save($request);
+
+        if(is_array($request) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return redirect('admin')->with($request);
     }
 
     /**
@@ -87,9 +94,9 @@ class ArticleController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($alias)
     {
-        //
+        echo "show: ".$alias;
     }
 
     /**
@@ -98,9 +105,9 @@ class ArticleController extends AdminController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($alias)
     {
-        //
+        echo "edit: ".$alias;
     }
 
     /**

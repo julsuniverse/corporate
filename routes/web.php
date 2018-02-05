@@ -58,6 +58,7 @@ Route::get('logout', 'Auth\LoginController@logout');
     Route::resource('/articles', 'Admin\ArticleController');
 
 });*/
+
 Route::get('ckfinder/ckfinder.html',function(){
     return view('pink.ckfinder.ckfinder');
 });
@@ -78,31 +79,30 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
         'as' => 'articles.create'
     ])->middleware('can:save,App\Article');
 
+    Route::post('articles/store', [
+        'uses' => 'Admin\ArticleController@store',
+        'as' => 'articles.store'
+    ])->middleware('can:save,App\Article');
+
     Route::get('articles/show/{alias}', [
         'uses' => 'Admin\ArticleController@show',
         'as' => 'articles.show'
     ])->middleware('');
 
-    Route::get('articles/update/{alias}', [
+    Route::put('articles/update/{alias}', [
         'uses' => 'Admin\ArticleController@updateupdate',
         'as' => 'articles.update'
     ])->middleware('');
 
-    Route::get('articles/store', [
-        'uses' => 'Admin\ArticleController@store',
-        'as' => 'articles.store'
-    ])->middleware('');
-
-    Route::get('articles/{alias}/edit', [
+    Route::get('articles/edit/{alias}', [
         'uses' => 'Admin\ArticleController@edit',
         'as' => 'articles.edit'
     ])->middleware('');
 
-    Route::get('articles/destroy{alias}', [
+    Route::delete('articles/destroy{alias}', [
         'uses' => 'Admin\ArticleController@destroy',
         'as' => 'articles.destroy'
     ])->middleware('');
 });
-
 
 

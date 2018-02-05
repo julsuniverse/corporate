@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Category;
+use App\Helpers\Translit;
 use App\Repositories\ArticlesRepository;
 
 class ArticleService
@@ -79,5 +80,14 @@ class ArticleService
 
         return $articles;
     }
+
+    public function save($request)
+    {
+        $data = $request->except('_token', 'image');
+        if(empty($data['alias']))
+            $data['alias'] = Translit::translit($data['title']);
+        return ;
+    }
+
 }
 
