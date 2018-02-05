@@ -122,12 +122,19 @@
         <script>
             var editor1 = CKEDITOR.replace( 'editor',{
                 filebrowserBrowseUrl: '{{asset('/ckfinder/ckfinder.html')}}',
-                filebrowserUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+                filebrowserUploadUrl: '{{asset('/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files')}}',
                 filebrowserWindowWidth: '1000',
                 filebrowserWindowHeight: '700'
             });
             CKFinder.setupCKEditor(editor1);
-            CKEDITOR.replace( 'editor2' );
+
+            var editor2 = CKEDITOR.replace( 'editor2',{
+                filebrowserBrowseUrl: '{{asset('/ckfinder/ckfinder.html')}}',
+                filebrowserUploadUrl: '{{asset('/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files')}}',
+                filebrowserWindowWidth: '1000',
+                filebrowserWindowHeight: '700'
+            });
+            CKFinder.setupCKEditor(editor2);
         </script>
     </div>
 </div>

@@ -28,10 +28,12 @@
     <link rel='stylesheet' href='{{ asset(config('settings.theme')) }}/css/font-awesome.css' type='text/css' media='all' />
 
     <!-- JAVASCRIPTs -->
-    <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/jquery.js"></script>
-
+    <script type="text/javascript" src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/ckeditor/ckeditor.js"></script>
     <script type="text/javascript" src="{{ asset(config('settings.theme')) }}/js/ckfinder/ckfinder.js"></script>
+    <script type="text/javascript" src="{{ asset('assets/bootstrap-filestyle/src/bootstrap-filestyle.min.js') }}"></script>
+
 
 
 
