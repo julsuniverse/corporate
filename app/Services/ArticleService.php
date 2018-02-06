@@ -86,7 +86,7 @@ class ArticleService
         $data = $request->except('_token', 'image');
         if(empty($data['alias']))
             $data['alias'] = Translit::translit($data['title']);
-        return ;
+        dd($data);
     }
 
 }

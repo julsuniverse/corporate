@@ -16,6 +16,16 @@ class ArticleRequest extends FormRequest
         return \Auth::user()->can('save', 'App\Article');
     }
 
+    protected function getValidatorInstance()
+    {
+        $validator = parent::getValidatorInstance();
+        $validator->sometimes('alias', 'unique:articles|max:255', function ($input) {
+            return !empty($input->alias);
+        });
+
+        return $validator;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,11 +33,6 @@ class ArticleRequest extends FormRequest
      */
     public function rules()
     {
-        $validator = parent::getValidatorInstance();
-        $validator->sometimes('alias', 'unique:articles|max:255', function ($input) {
-            return !empty($input->alias);
-        });
-
         return [
             'title' => 'required|max:255',
             'text' => 'required',
