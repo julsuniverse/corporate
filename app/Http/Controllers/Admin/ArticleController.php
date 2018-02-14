@@ -9,6 +9,7 @@ use App\Repositories\CategoryRepository;
 use App\Services\ArticleService;
 use App\Services\MenuService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 
 class ArticleController extends AdminController
 {
@@ -74,18 +75,18 @@ class ArticleController extends AdminController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ArticleRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ArticleRequest $request)
     {
         $result = $this->articleService->save($request);
 
-        if(is_array($request) && !empty($result['error'])) {
+        if(is_array($result) && !empty($result['error'])) {
             return back()->with($result);
         }
 
-        return redirect('admin')->with($request);
+        return redirect('admin')->with($result);
     }
 
     /**

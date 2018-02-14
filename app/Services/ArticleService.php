@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Category;
 use App\Helpers\Translit;
+use App\Http\Requests\ArticleRequest;
 use App\Repositories\ArticlesRepository;
+use Intervention\Image\Facades\Image;
 
 class ArticleService
 {
@@ -12,11 +14,11 @@ class ArticleService
 
     /**
      * ArticleService constructor.
-     * @param ArticlesRepository $a_rep
+     * @param ArticlesRepository $articlesRepository
      */
-    public function __construct(ArticlesRepository $a_rep)
+    public function __construct(ArticlesRepository $articlesRepository)
     {
-        $this->repository = $a_rep;
+        $this->repository = $articlesRepository;
     }
 
     /**
@@ -81,12 +83,65 @@ class ArticleService
         return $articles;
     }
 
+    /**
+     * @param ArticleRequest $request
+     * @return array|string
+     */
     public function save($request)
     {
         $data = $request->except('_token', 'image');
         if(empty($data['alias']))
             $data['alias'] = Translit::translit($data['title']);
-        dd($data);
+
+        if($this->one($data['alias'], false)) {
+            $request->merge(array('alias' => $data['alias']));
+            $request->flash();
+
+            return ['error' => 'Данный псевдоним уже используется'];
+        }
+
+        if($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            if($image->isValid()) {
+                $str = str_random(8);
+
+                $obj = new \stdClass();
+                $obj->mini = $str . '_mini.jpg';
+                $obj->max = $str . '_max.jpg';
+                $obj->path = $str . '.jpg';
+
+                /** @var \Intervention\Image\Image $img */
+                $img = Image::make($image);
+
+                $img->fit(
+                    \Config::get('settings.image.width'),
+                    \Config::get('settings.image.height')
+                )->save(public_path().'/'.env('THEME').'/images/articles/'.$obj->path);
+
+                $img->fit(
+                    \Config::get('settings.articles_img.max.width'),
+                    \Config::get('settings.articles_img.max.height')
+                )->save(public_path().'/'.env('THEME').'/images/articles/'.$obj->max);
+
+                $img->fit(
+                    \Config::get('settings.articles_img.mini.width'),
+                    \Config::get('settings.articles_img.mini.height')
+                )->save(public_path().'/'.env('THEME').'/images/articles/'.$obj->mini);
+
+                $data['img'] = json_encode($obj);
+                $data['user_id'] = \Auth::id();
+
+                try{
+                    if($this->repository->save($data))
+                        return [
+                        'status' => 'Материал сохранен'
+                    ];
+                } catch(\Exception $exception) {
+                    return $exception->getMessage();
+                }
+            }
+        }
     }
 
 }

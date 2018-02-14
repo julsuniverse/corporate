@@ -27,4 +27,18 @@ class ArticlesRepository extends Repository
         return $article;
     }
 
+    /**
+     * @param array $data
+     * @return bool
+     * @throws \Exception
+     */
+    public function save(array $data)
+    {
+        $this->model->fill($data);
+        if(!$this->model->save())
+            throw new \Exception('Saving error');
+
+        return true;
+    }
+
 }
