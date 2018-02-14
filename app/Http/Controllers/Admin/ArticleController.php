@@ -3,29 +3,27 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Article;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ArticleRequest;
-use App\Repositories\CategoryRepository;
 use App\Services\ArticleService;
+use App\Services\CategoryService;
 use App\Services\MenuService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
 
 class ArticleController extends AdminController
 {
-    private $categoryRepository;
+    private $categoryService;
 
     public function __construct(
         MenuService $menuService,
         ArticleService $articleService,
-        CategoryRepository $categoryRepository
+        CategoryService $categoryService
     )
     {
         parent::__construct($menuService);
 
         $this->template = env('THEME').'.admin.articles';
         $this->articleService = $articleService;
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryService = $categoryService;
     }
 
     /**
@@ -54,17 +52,8 @@ class ArticleController extends AdminController
     public function create()
     {
         $this->title = "Create article";
-        $categories = $this->categoryRepository->get();
 
-        $lists = array();
-        foreach($categories as $category) {
-            if ($category->parent_id == 0) {
-                if(!isset($lists[$category->title]))
-                    $lists[$category->title] = array();
-            } else {
-                $lists[$categories->where('id', $category->parent_id)->first()->title][$category->id] = $category->title;//[$category->id] = $category->title;
-            }
-        }
+        $lists = $this->categoryService->get();
 
         $this->content = view(env('THEME').'.admin.articles_create_content')
             ->with('categories', $lists)
@@ -103,12 +92,23 @@ class ArticleController extends AdminController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Article $article
+     * @return ArticleController
+     * @throws \Throwable
      */
-    public function edit($alias)
+    public function edit(Article $article)
     {
-        echo "edit: ".$alias;
+        $article->img = json_decode($article->img);
+        $lists = $this->categoryService->get();
+        $this->title = 'Редактирование материала: ' . $article->title;
+
+        $this->content = view(env('THEME').'.admin.articles_create_content')
+            ->with([
+                'categories' => $lists,
+                'article' => $article,
+            ])
+            ->render();
+        return $this->renderOutput();
     }
 
     /**

@@ -87,22 +87,22 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('articles/show/{alias}', [
         'uses' => 'Admin\ArticleController@show',
         'as' => 'articles.show'
-    ])->middleware('');
+    ]);
 
     Route::put('articles/update/{alias}', [
-        'uses' => 'Admin\ArticleController@updateupdate',
+        'uses' => 'Admin\ArticleController@update',
         'as' => 'articles.update'
-    ])->middleware('');
+    ]);
 
     Route::get('articles/edit/{alias}', [
         'uses' => 'Admin\ArticleController@edit',
         'as' => 'articles.edit'
-    ])->middleware('');
+    ])->middleware('can:edit,App\Article');
 
     Route::delete('articles/destroy{alias}', [
         'uses' => 'Admin\ArticleController@destroy',
         'as' => 'articles.destroy'
-    ])->middleware('');
+    ]);
 });
 
 
