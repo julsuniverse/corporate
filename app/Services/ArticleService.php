@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Article;
 use App\Category;
 use App\Helpers\Translit;
 use App\Http\Requests\ArticleRequest;
@@ -85,15 +86,17 @@ class ArticleService
 
     /**
      * @param ArticleRequest $request
+     * @param Article $article
      * @return array|string
      */
-    public function save($request)
+    public function save($request, Article $article = null)
     {
-        $data = $request->except('_token', 'image');
+        $data = $request->except('_token', 'image', '_method');
         if(empty($data['alias']))
             $data['alias'] = Translit::translit($data['title']);
 
-        if($this->one($data['alias'], false)) {
+        $result = $this->one($data['alias'], false);
+        if($article ? ($result->id != $article->id) : $result) {
             $request->merge(array('alias' => $data['alias']));
             $request->flash();
 
@@ -132,15 +135,16 @@ class ArticleService
                 $data['img'] = json_encode($obj);
                 $data['user_id'] = \Auth::id();
 
-                try{
-                    if($this->repository->save($data))
-                        return [
-                        'status' => 'Материал сохранен'
-                    ];
-                } catch(\Exception $exception) {
-                    return $exception->getMessage();
-                }
             }
+        }
+
+        try{
+            if($this->repository->save($data, $article))
+                return [
+                    'status' => 'Материал сохранен'
+                ];
+        } catch(\Exception $exception) {
+            return $exception->getMessage();
         }
     }
 

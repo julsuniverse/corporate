@@ -7,7 +7,6 @@ use App\Http\Requests\ArticleRequest;
 use App\Services\ArticleService;
 use App\Services\CategoryService;
 use App\Services\MenuService;
-use Illuminate\Http\Request;
 
 class ArticleController extends AdminController
 {
@@ -114,13 +113,19 @@ class ArticleController extends AdminController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param ArticleRequest $request
+     * @param Article $article
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request, Article $article)
     {
-        //
+        $result = $this->articleService->save($request, $article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return redirect('admin')->with($result);
     }
 
     /**

@@ -32,10 +32,14 @@ class ArticlesRepository extends Repository
      * @return bool
      * @throws \Exception
      */
-    public function save(array $data)
+    public function save(array $data, Article $article = null)
     {
-        $this->model->fill($data);
-        if(!$this->model->save())
+        if($article) {
+            $model = $article->fill($data);
+        } else {
+            $model = $this->model->fill($data);
+        }
+        if(!$model->save())
             throw new \Exception('Saving error');
 
         return true;
