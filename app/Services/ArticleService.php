@@ -96,7 +96,7 @@ class ArticleService
             $data['alias'] = Translit::translit($data['title']);
 
         $result = $this->one($data['alias'], false);
-        if($article ? ($result->id != $article->id) : $result) {
+        if($article ? (isset($result->id) && $result->id != $article->id) : $result) {
             $request->merge(array('alias' => $data['alias']));
             $request->flash();
 
