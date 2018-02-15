@@ -41,9 +41,13 @@
     <!-- START COMMENTS -->
     <div id="comments">
         <h3 id="comments-title">
-            <span>{{ count($article->comments) ? count($article->comments) : '0' }}</span> {{ Lang::choice('ru.comments', count($article->comments)) }}
+            @if (isset($article->comments))
+                <span>{{ count($article->comments) ? count($article->comments) : '0'   }}</span> {{ Lang::choice('ru.comments', count($article->comments)) }}
+            @else
+                <span>0</span> {{ Lang::choice('ru.comments', 0) }}
+            @endif
         </h3>
-        @if(count($article->comments) >0)
+        @if(isset($article->comments) && count($article->comments) > 0)
             @set($com, $article->comments->groupBy('parent_id'))
             <ol class="commentlist group">
                 @foreach($com as $k => $comments)

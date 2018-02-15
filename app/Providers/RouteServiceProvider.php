@@ -32,7 +32,6 @@ class RouteServiceProvider extends ServiceProvider
             return Portfolio::where('alias', $value)->first() ?? abort(404);
         });
 
-
         Route::bind('alias', function ($value) {
             return Article::where('alias', $value)->first() ?? abort(404);
         });

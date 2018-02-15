@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\ArticlesRepository;
 use App\Services\ArticleService;
 use App\Services\CommentService;
 use App\Services\MenuService;
@@ -10,15 +11,17 @@ use Illuminate\Http\Request;
 
 class ArticleController extends SiteController
 {
+    private $articlesRepository;
     /**
      * ArticleController constructor.
-     * @param ArticleService $articleService
+     * @param ArticlesRepository $articlesRepository
      * @param PortfolioService $portfolioService
      * @param MenuService $menuService
      * @param CommentService $commentService
      */
     public function __construct(
         ArticleService $articleService,
+        ArticlesRepository $articlesRepository,
         PortfolioService $portfolioService,
         MenuService $menuService,
         CommentService $commentService
@@ -26,6 +29,7 @@ class ArticleController extends SiteController
         parent::__construct($menuService);
 
         $this->articleService = $articleService;
+        $this->articlesRepository = $articlesRepository;
         $this->portfolioService = $portfolioService;
         $this->commentService = $commentService;
 
@@ -60,9 +64,10 @@ class ArticleController extends SiteController
      */
     public function show($alias)
     {
-        $article = $this->articleService->one($alias, ['comments' => true]);
+        $article = $this->articlesRepository->one($alias, ['comments' => true]);
         if($article)
             $article->img = json_decode($article->img);
+
         $content = view(env('THEME').'.article_content')
             ->with('article', $article)
             ->render();
