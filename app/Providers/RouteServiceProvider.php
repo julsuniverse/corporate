@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Article;
+use App\Portfolio;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -27,9 +28,16 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('alias', '[\w-]+');
         parent::boot();
 
+        Route::bind('portfolios', function ($value) {
+            return Portfolio::where('alias', $value)->first() ?? abort(404);
+        });
+
+
         Route::bind('alias', function ($value) {
             return Article::where('alias', $value)->first() ?? abort(404);
         });
+
+
 
     }
 

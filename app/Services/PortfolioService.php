@@ -24,4 +24,15 @@ class PortfolioService
         return $portfolio;
     }
 
+    public function getPortfolios($take = false, $paginate = true)
+    {
+
+        $portfolios = $this->repository->get('*', $take, $paginate);
+        if ($portfolios) {
+            $portfolios->load('filter');
+        }
+
+        return $portfolios;
+    }
+
 }
