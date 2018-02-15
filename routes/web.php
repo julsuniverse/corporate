@@ -99,7 +99,7 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
         'as' => 'articles.edit'
     ])->middleware('can:edit,App\Article');
 
-    Route::delete('articles/destroy{alias}', [
+    Route::delete('articles/destroy/{alias}', [
         'uses' => 'Admin\ArticleController@destroy',
         'as' => 'articles.destroy'
     ]);

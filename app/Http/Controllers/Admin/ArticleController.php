@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Article;
 use App\Http\Requests\ArticleRequest;
+use App\Repositories\ArticlesRepository;
 use App\Services\ArticleService;
 use App\Services\CategoryService;
 use App\Services\MenuService;
@@ -11,9 +12,11 @@ use App\Services\MenuService;
 class ArticleController extends AdminController
 {
     private $categoryService;
+    private $articlesRepository;
 
     public function __construct(
         MenuService $menuService,
+        ArticlesRepository $articlesRepository,
         ArticleService $articleService,
         CategoryService $categoryService
     )
@@ -21,8 +24,10 @@ class ArticleController extends AdminController
         parent::__construct($menuService);
 
         $this->template = env('THEME').'.admin.articles';
+        $this->articlesRepository = $articlesRepository;
         $this->articleService = $articleService;
         $this->categoryService = $categoryService;
+
     }
 
     /**
@@ -131,11 +136,17 @@ class ArticleController extends AdminController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Article $article
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
-        //
+        $result = $this->articlesRepository->delete($article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->with($result);
+        }
+
+        return redirect('admin')->with($result);
     }
 }

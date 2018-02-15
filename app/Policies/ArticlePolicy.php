@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Article;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -28,6 +29,18 @@ class ArticlePolicy
     {
         return $user->canDo('UPDATE_ARTICLES');
     }
+
+    /**
+     * @param User $user
+     * @param Article $article
+     * @return bool
+     */
+    public function delete(User $user, Article $article)
+    {
+        return($user->canDo('DELETE_ARTICLES') && ($user->id == $article->user_id));
+    }
+
+
 
 
 }

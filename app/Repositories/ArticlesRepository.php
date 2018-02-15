@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Article;
+use Gate;
 
 class ArticlesRepository extends Repository
 {
@@ -29,6 +30,7 @@ class ArticlesRepository extends Repository
 
     /**
      * @param array $data
+     * @param Article|null $article
      * @return bool
      * @throws \Exception
      */
@@ -43,6 +45,26 @@ class ArticlesRepository extends Repository
             throw new \Exception('Saving error');
 
         return true;
+    }
+
+    /**
+     * @param Article $article
+     * @return array
+     */
+    public function delete(Article $article)
+    {
+        if(Gate::denies('delete', $article)) {
+            abort(403);
+        }
+
+        try {
+            if ($article->delete()) {
+                return [
+                    'status' => 'Материал удален!',
+                ];
+            }
+        } catch (\Exception $e) {
+        }
     }
 
 }
